@@ -19,7 +19,7 @@ app.use(
   session({
     store: new pgSession({
       pool: pool, // Connection pool
-      tableName: "session", // Use another table-name than the default "session" one
+      tableName: "session",
     }),
     name: "session-id",
     secret: "rohith",
@@ -42,5 +42,8 @@ app.use("/auth", login);
 
 const home = require("./routes/home");
 app.use("/", auth, home);
+
+const orders = require("./routes/orders");
+app.use("/orders", orders);
 
 app.listen(5000);

@@ -9,17 +9,4 @@ route.get("/", (req, res) => {
   });
 });
 
-route.post("/addcart", (req, res) => {
-  let { name, price, id, author, description } = req.body;
-  const user_id = req.session.userID;
-  let errors = [];
-  const re = /^[1-9]\d{0,7}(?:\.\ d{1,4})?$/;
-  if (!re.test(price)) {
-    errors.push({ message: "Error please try again" });
-  } else {
-    console.log("pass");
-  }
-  res.redirect("/");
-});
-
 module.exports = route;

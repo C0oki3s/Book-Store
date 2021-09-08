@@ -66,11 +66,9 @@ route.post("/upload/book", upload.single("book_image"), (req, res) => {
 route.get("/getbooks", (req, res) => {
   pool.query(`SELECT * FROM books`, (err, results) => {
     if (err) throw err;
-    if (results.rows.length > 0) {
-      res.render("admin", {
-        book: results.rows,
-      });
-    }
+    res.render("admin", {
+      book: results.rows,
+    });
   });
 });
 

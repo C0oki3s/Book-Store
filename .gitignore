@@ -1,4 +1,5 @@
 node_modules/
 *.sql
 *.vscode
+*.http
 package-lock.json

@@ -1,6 +1,6 @@
 const pool = require("../db/db");
-const auth = (req, res, next) => {
-  pool.query(
+const auth = async (req, res, next) => {
+  await pool.query(
     `SELECT * FROM session WHERE sid = $1`,
     [req.sessionID],
     (err, results) => {
