@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const pool = require("./db/db");
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
+const methodOverride = require("method-override");
 require("dotenv").config();
 const app = express();
 
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 const signup = require("./routes/signup");
 app.use("/auth", signup);
 
+var expiryDate = new Date(Date.now() + 60 * 60 * 1000);
 app.use(
   session({
     store: new pgSession({
@@ -32,12 +34,27 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    // cookie: { maxAge: 30 * 24 * 60 * 1000, sameSite: true, secure: true },
+    cookie: {
+      maxAge: expiryDate,
+      sameSite: "lax",
+      secure: false,
+      httpOnly: true,
+    },
   })
 );
 
 const home = require("./routes/home");
 app.use("/", home);
+
+// app.use(
+//   methodOverride((req, res) => {
+//     if (req.body && typeof req.body == "object" && "_method" in req.body) {
+//       var method = req.body._method;
+//       delete req.body._method;
+//       return method;
+//     }
+//   })
+// );
 
 const auth = require("./middleware/Auth");
 
