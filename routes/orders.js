@@ -66,6 +66,8 @@ route.get("/", (req, res) => {
       if (err) throw err;
       if (results.rows.length > 0) {
         res.render("orders", { books: results.rows });
+      } else {
+        res.render("orders");
       }
     }
   );

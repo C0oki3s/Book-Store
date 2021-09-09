@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 const signup = require("./routes/signup");
 app.use("/auth", signup);
 
-var expiryDate = new Date(Date.now() + 60 * 60 * 1000);
+var expiryDate = 38000000;
 app.use(
   session({
     store: new pgSession({

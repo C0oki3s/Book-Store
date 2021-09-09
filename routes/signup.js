@@ -24,7 +24,7 @@ route.post("/signup", async (req, res) => {
   if (errors.length > 0) {
     res.render("signup", { errors: errors });
   } else {
-    let hashpassword = await bcrypt.hash(password, 20);
+    let hashpassword = await bcrypt.hash(password, 8);
     await pool.query(
       `SELECT * FROM user_auth WHERE email = $1`,
       [email],
