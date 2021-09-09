@@ -22,37 +22,33 @@ route.post("/addcart", async (req, res) => {
           [user_id],
           (err, results) => {
             if (err) throw err;
-            if (results.rows.length > 0) {
-              if (results.rows[0].book_id == id) {
-                let new_quantity = results.rows[0].quantity + quantity;
-                let new_price = result.rows[0].price * new_quantity;
-                pool.query(
-                  `UPDATE orders SET quantity =$1, price = $2 WHERE user_id=$3 RETURNING id`,
-                  [new_quantity, new_price, user_id],
-                  (err, results) => {
-                    if (err) throw err;
-                    res.redirect("/orders");
-                  }
-                );
-              } else {
-                pool.query(
-                  `INSERT INTO orders(user_id,book_id,quantity,price,book_image,book_name) VALUES($1,$2,$3,$4,$5,$6) RETURNING id`,
-                  [
-                    user_id,
-                    id,
-                    quantity,
-                    result.rows[0].price,
-                    result.rows[0].book_image,
-                    result.rows[0].name,
-                  ],
-                  (err, results) => {
-                    if (err) throw err;
-                    res.redirect("/orders");
-                  }
-                );
-              }
+            if (results.rows.length > 0 && results.rows[0].book_id == id) {
+              let new_quantity = results.rows[0].quantity + quantity;
+              let new_price = result.rows[0].price * new_quantity;
+              pool.query(
+                `UPDATE orders SET quantity =$1, price = $2 WHERE user_id=$3 RETURNING id`,
+                [new_quantity, new_price, user_id],
+                (err, results) => {
+                  if (err) throw err;
+                  res.redirect("/orders");
+                }
+              );
             } else {
-              res.status(400).redirect("/");
+              pool.query(
+                `INSERT INTO orders(user_id,book_id,quantity,price,book_image,book_name) VALUES($1,$2,$3,$4,$5,$6) RETURNING id`,
+                [
+                  user_id,
+                  id,
+                  quantity,
+                  result.rows[0].price,
+                  result.rows[0].book_image,
+                  result.rows[0].name,
+                ],
+                (err, results) => {
+                  if (err) throw err;
+                  res.redirect("/orders");
+                }
+              );
             }
           }
         );
