@@ -1,6 +1,5 @@
 const express = require("express");
 const pool = require("../db/db");
-const auth = require("../middleware/Auth");
 const multer = require("multer");
 const crypto = require("crypto");
 
@@ -32,7 +31,7 @@ const upload = multer({
 
 const route = express.Router();
 
-route.get("/getusers", auth, (req, res) => {
+route.get("/getusers", (req, res) => {
   let errors = [];
   pool.query(`SELECT * FROM user_auth`, (err, results) => {
     if (err) throw err;

@@ -1,5 +1,7 @@
 const pool = require("../db/db");
-const auth = async (req, res, next) => {
+let middlewareObject = {};
+
+middlewareObject.auth = async (req, res, next) => {
   await pool.query(
     `SELECT * FROM session WHERE sid = $1`,
     [req.sessionID],
@@ -14,4 +16,4 @@ const auth = async (req, res, next) => {
   );
 };
 
-module.exports = auth;
+module.exports = middlewareObject;

@@ -23,7 +23,6 @@ route.post("/addcart", async (req, res) => {
           (err, results) => {
             if (err) throw err;
             if (results.rows.length > 0) {
-              console.log(results.rows);
               if (results.rows[0].book_id == id) {
                 let new_quantity = results.rows[0].quantity + quantity;
                 let new_price = result.rows[0].price * new_quantity;
@@ -53,7 +52,7 @@ route.post("/addcart", async (req, res) => {
                 );
               }
             } else {
-              console.log("error");
+              res.status(400).redirect("/");
             }
           }
         );
