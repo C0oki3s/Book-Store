@@ -5,20 +5,39 @@ const pool = require("./db/db");
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
 const methodOverride = require("method-override");
+const cors = require("cors");
 require("dotenv").config();
 const app = express();
 
+app.options(
+  "*",
+  cors({
+    optionsSuccessStatus: "204",
+    credentials: true,
+    origin: "http://localhost:3000",
+    allowedHeaders: [
+      "Content-Type",
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Credentials",
+    ],
+  })
+);
+
+app.use(
+  "*",
+  cors({
+    origin: "http://localhost:3000",
+    allowedHeaders: ["Content-Type", "X-Requested-With"],
+    credentials: true,
+  })
+);
+
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(cookieParser());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use("/images", express.static("images"));
-
-app.use((req, res, next) => {
-  res.setHeader("X-Frame-Options", "SAMEORIGIN");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
-  next();
-});
 
 const signup = require("./routes/signup");
 app.use("/auth", signup);

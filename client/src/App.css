@@ -1,0 +1,24 @@
+.App {
+  text-align: center;
+}
+
+.App {
+  text-align: center;
+}
+
+.NavBar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  min-height: 6vh;
+  background-color: rgb(73, 79, 82);
+  color: white;
+}
+
+.Navlink {
+  list-style: none;
+}
+
+.card {
+  width: 18rem;
+}
