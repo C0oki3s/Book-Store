@@ -30,15 +30,17 @@ const upload = multer({
 const route = express.Router();
 
 route.get("/getusers", (req, res) => {
+  console.log(req.session);
+  console.log(req.cookies);
   let errors = [];
   pool.query(`SELECT * FROM user_auth`, (err, results) => {
     if (err) throw err;
     if (results.rows.length > 0) {
-      // res.render("getusers", { user: results.rows });
-      res.json(results.rows);
+      res.render("getusers", { user: results.rows });
+      // res.json(results.rows);
     } else {
       errors.push({ message: "Dont Have rights" });
-      // res.render("admin", { errors: errors });
+      res.render("admin", { errors: errors });
       res.json({ error: errors });
     }
   });
@@ -72,10 +74,10 @@ route.post("/upload/book", upload.single("book_image"), async (req, res) => {
 route.get("/getbooks", (req, res) => {
   pool.query(`SELECT * FROM books`, (err, results) => {
     if (err) throw err;
-    // res.render("admin", {
-    //   book: results.rows,
-    // });
-    res.json(results.rows);
+    res.render("admin", {
+      book: results.rows,
+    });
+    // res.json(results.rows);
   });
 });
 

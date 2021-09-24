@@ -21,26 +21,21 @@ const Nav = () => {
       </button>
       <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
         <Link className="navbar-brand" to="/">
-          <li style={navStyle} className="Navlink">
+          <div style={navStyle} className="Navlink">
             Home
-          </li>
+          </div>
         </Link>
         <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-          <li className="nav-item active">
+          <div className="nav-item active">
             <Link className="navbar-brand" to="/admin/getbooks">
-              <li style={navStyle}>GetBooks</li>
+              <div style={navStyle}>GetBooks</div>
             </Link>
-          </li>
-          <li className="nav-item">
+          </div>
+          <div className="nav-item">
             <Link className="navbar-brand" to="/admin/getusers">
-              <li style={navStyle}>GetUsers</li>
+              <div style={navStyle}>GetUsers</div>
             </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="navbar-brand" to="/admin/upload">
-              <li style={navStyle}>UploadBook</li>
-            </Link>
-          </li>
+          </div>
         </ul>
       </div>
     </nav>

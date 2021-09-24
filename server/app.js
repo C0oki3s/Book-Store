@@ -1,7 +1,7 @@
-const express = require("express");
+const express = require("express"); //Express framework nodejs -> http
 const path = require("path");
-const cookieParser = require("cookie-parser");
-const pool = require("./db/db");
+const cookieParser = require("cookie-parser"); //read Forntend cookies
+const pool = require("./db/db"); //Database
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
 const methodOverride = require("method-override");
@@ -27,17 +27,20 @@ app.use(
   "*",
   cors({
     origin: "http://localhost:3000",
-    allowedHeaders: ["Content-Type", "X-Requested-With"],
     credentials: true,
   })
 );
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false })); //middleware
 app.use(express.json());
 app.use(cookieParser());
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "views")); //ejs
 app.set("view engine", "ejs");
-app.use("/images", express.static("images"));
+
+app.use((req, res, next) => {
+  res.header("X-Frame-Options", "DENY");
+  next();
+});
 
 const signup = require("./routes/signup");
 app.use("/auth", signup);
@@ -93,4 +96,4 @@ app.use(function (req, res, next) {
   res.status(404).render("404");
 });
 
-app.listen(5000);
+app.listen(80);

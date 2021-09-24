@@ -22,7 +22,7 @@ const GetBooks = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    window.location = "/admin/getbooks";
+    window.location = "/";
   };
 
   return books.map((book) => (

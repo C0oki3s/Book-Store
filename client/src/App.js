@@ -1,17 +1,19 @@
 import "./App.css";
 import GetUsers from "./components/Admin/GetUsers";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Nav from "./components/Nav";
+import Nav from "./components/Admin/Nav";
 import GetBooks from "./components/Admin/GetBooks";
+import Card from "./components/Client/Home";
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <Nav />
+        <Route path="/" exact component={Card} />
+      </Router>
+      <Router>
         <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/admin" exact component={Home} />
+          <Route path="/admin" exact component={Nav} />
           <Route path="/admin/getusers" component={GetUsers} />
           <Route path="/admin/getbooks" component={GetBooks} />
         </Switch>
@@ -19,13 +21,5 @@ function App() {
     </div>
   );
 }
-
-const Home = () => {
-  return (
-    <div>
-      <h1>Home</h1>
-    </div>
-  );
-};
 
 export default App;
