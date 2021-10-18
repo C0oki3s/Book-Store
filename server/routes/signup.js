@@ -77,7 +77,7 @@ route.post("/signup", async (req, res) => {
                         if (response) {
                           res.send(JSON.stringify(response));
                         } else {
-                          res.send("Fuck");
+                          res.send("Hell No");
                         }
                       } catch (error) {
                         res.send(error);
