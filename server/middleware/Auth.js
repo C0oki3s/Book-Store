@@ -1,4 +1,6 @@
 const pool = require("../db/db");
+const mongoose = require("mongoose");
+const Database = require("../db/email");
 let middlewareObject = {};
 
 middlewareObject.auth = async (req, res, next) => {
@@ -14,6 +16,15 @@ middlewareObject.auth = async (req, res, next) => {
       }
     }
   );
+};
+
+middlewareObject.isverified = async (req, res, next) => {
+  const email = await Database.find({ email: req.body.email });
+  if (email.isverified == true) {
+    next();
+  } else {
+    return res.send("Email not verified");
+  }
 };
 
 module.exports = middlewareObject;

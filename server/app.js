@@ -87,7 +87,7 @@ const users = require("./routes/users");
 app.use("/users", auth.auth, users);
 
 const login = require("./routes/login");
-app.use("/auth", login);
+app.use("/auth", auth.auth, auth.isverified, login);
 
 const orders = require("./routes/orders");
 app.use("/orders", auth.auth, orders);
