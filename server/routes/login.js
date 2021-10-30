@@ -1,6 +1,7 @@
 var express = require("express");
 const bcrypt = require("bcrypt");
 const pool = require("../db/db");
+const Emailverify = require("../db/email");
 
 var route = express.Router();
 
@@ -22,6 +23,25 @@ route.post("/login", async (req, res) => {
       const user = data.rows[0];
       const decrypt = await bcrypt.compare(password, user.password);
       if (decrypt) {
+        try {
+          const Find_data = await Emailverify.findOne({ email: email });
+          if (Find_data?.email) {
+            return res.json({ message: "Email already verified" });
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
+        const new_data = await new Emailverify({
+          email: email,
+          isVerified: true,
+        });
+        await new_data.save((err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+
         req.session.userID = user.id;
         res.redirect("/");
       } else {
