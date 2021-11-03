@@ -26,19 +26,11 @@ route.post("/login", async (req, res) => {
         try {
           const Find_data = await Emailverify.findOne({ email: email });
           if (Find_data?.email) {
-            return res.json({ message: "Email already verified" });
+            req.session.userID = user.id;
+            res.redirect("/");
           }
-          const new_data = await new Emailverify({
-            email: email,
-            isVerified: true,
-          });
-          await new_data.save((err) => {
-            if (err) {
-              console.log(err);
-            }
-          });
-          req.session.userID = user.id;
-          res.redirect("/");
+          errors.push({ message: "Please verify email" });
+          res.render("login", { errors: errors });
         } catch (error) {
           console.log(error);
         }
