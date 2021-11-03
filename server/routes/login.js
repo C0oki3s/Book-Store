@@ -28,23 +28,6 @@ route.post("/login", async (req, res) => {
           if (Find_data?.email) {
             return res.json({ message: "Email already verified" });
           }
-
-          
-        const new_data = await new Emailverify({
-          email: email,
-          isVerified: true,
-        });
-        await new_data.save((err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
-        } catch (error) {
-          console.log(error);
-        }
-        req.session.userID = user.id;
-        res.redirect("/");
-
           const new_data = await new Emailverify({
             email: email,
             isVerified: true,
@@ -54,7 +37,6 @@ route.post("/login", async (req, res) => {
               console.log(err);
             }
           });
-
           req.session.userID = user.id;
           res.redirect("/");
         } catch (error) {
