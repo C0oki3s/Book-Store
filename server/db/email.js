@@ -11,3 +11,6 @@ const EmailVerifySchema = mongoose.Schema({
     default: false,
   },
 });
+
+const Emailverify = mongoose.model("email",EmailVerifySchema)
+module.exports = Emailverify

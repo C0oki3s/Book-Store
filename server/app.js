@@ -5,9 +5,15 @@ const pool = require("./db/db"); //Database
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
 const methodOverride = require("method-override");
+const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
+
+mongoose.connect(process.env.MONGODB_URI,(err)=>{
+  if(err)console.log(err)
+  console.log("DB CONNECTED")
+});
 
 app.options(
   "*",

@@ -5,6 +5,7 @@ const pool = require("../db/db");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const redis = require("redis");
+const Emailverify = require("../db/email");
 const client = redis.createClient();
 
 transporter = nodemailer.createTransport({
@@ -107,13 +108,24 @@ route.get("/verify", (req, res) => {
     if (isExits) {
       jwt.verify(token, process.env.JWT_SECRET, (err, results) => {
         if (err) throw err;
-        pool.query(
-          `UPDATE user_auth SET verified=$1`,
-          [isExits],
-          (err, result) => {
-            res.send("Great");
+        try {
+          const Find_data = await Emailverify.findOne({ email: results.email });
+          if (Find_data?.email) {
+            return res.json({ message: "Email already verified" });
           }
-        );
+          const new_data = await new Emailverify({
+            email: results.email,
+            isVerified: true,
+          });
+          await new_data.save((err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+          res.redirect("/login")
+        } catch (error) {
+          console.log(error);
+        }
       });
     } else {
       res.send("bad");
