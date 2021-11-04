@@ -10,9 +10,9 @@ const cors = require("cors");
 require("dotenv").config();
 const app = express();
 
-mongoose.connect(process.env.MONGODB_URI,(err)=>{
-  if(err)console.log(err)
-  console.log("DB CONNECTED")
+mongoose.connect(process.env.MONGODB_URI, (err) => {
+  if (err) console.log(err);
+  console.log("DB CONNECTED");
 });
 
 app.options(
@@ -93,7 +93,7 @@ const users = require("./routes/users");
 app.use("/users", auth.auth, users);
 
 const login = require("./routes/login");
-app.use("/auth", auth.auth, auth.isverified, login);
+app.use("/auth", login);
 
 const orders = require("./routes/orders");
 app.use("/orders", auth.auth, orders);
@@ -102,4 +102,4 @@ app.use(function (req, res, next) {
   res.status(404).render("404");
 });
 
-app.listen(80);
+app.listen(5000);

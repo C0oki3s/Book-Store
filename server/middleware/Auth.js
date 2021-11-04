@@ -20,7 +20,7 @@ middlewareObject.auth = async (req, res, next) => {
 
 middlewareObject.isverified = async (req, res, next) => {
   const email = await Database.find({ email: req.body.email });
-  if (email.isverified == true) {
+  if (email.isverified) {
     next();
   } else {
     return res.send("Email not verified");

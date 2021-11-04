@@ -30,8 +30,6 @@ const upload = multer({
 const route = express.Router();
 
 route.get("/getusers", (req, res) => {
-  console.log(req.session);
-  console.log(req.cookies);
   let errors = [];
   pool.query(`SELECT * FROM user_auth`, (err, results) => {
     if (err) throw err;

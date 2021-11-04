@@ -25,12 +25,13 @@ route.post("/login", async (req, res) => {
       if (decrypt) {
         try {
           const Find_data = await Emailverify.findOne({ email: email });
-          if (Find_data?.email) {
+          if (Find_data?.isVerified) {
             req.session.userID = user.id;
             res.redirect("/");
+          } else {
+            errors.push({ message: "Please verify email" });
+            res.render("login", { errors: errors });
           }
-          errors.push({ message: "Please verify email" });
-          res.render("login", { errors: errors });
         } catch (error) {
           console.log(error);
         }

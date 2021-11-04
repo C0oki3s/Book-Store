@@ -5,6 +5,7 @@ const pool = require("../db/db");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const redis = require("redis");
+require("dotenv").config();
 const Emailverify = require("../db/email");
 const client = redis.createClient();
 
@@ -12,7 +13,7 @@ transporter = nodemailer.createTransport({
   service: "Gmail",
   pool: true,
   auth: {
-    user: "rohithchowdary86@gmail.com",
+    user: "rohithchowdary86@gmail",
     pass: "Sairohith@9",
   },
 });
@@ -106,11 +107,11 @@ route.get("/verify", (req, res) => {
   client.hexists(token, "email", (err, isExits) => {
     if (err) throw err;
     if (isExits) {
-      jwt.verify(token, process.env.JWT_SECRET, (err, results) => {
+      jwt.verify(token, process.env.JWT_SECRET, async (err, results) => {
         if (err) throw err;
         try {
           const Find_data = await Emailverify.findOne({ email: results.email });
-          if (Find_data?.email) {
+          if (Find_data?.isVerified) {
             return res.json({ message: "Email already verified" });
           }
           const new_data = await new Emailverify({
@@ -122,7 +123,8 @@ route.get("/verify", (req, res) => {
               console.log(err);
             }
           });
-          res.redirect("/login")
+          client.hdel(token, "email");
+          res.redirect("/login");
         } catch (error) {
           console.log(error);
         }
