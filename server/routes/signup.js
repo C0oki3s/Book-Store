@@ -13,7 +13,7 @@ transporter = nodemailer.createTransport({
   service: "Gmail",
   pool: true,
   auth: {
-    user: "rohithchowdary86@gmail",
+    user: "rohithchowdary86@gmail.com",
     pass: "Sairohith@9",
   },
 });
@@ -69,8 +69,8 @@ route.post("/signup", async (req, res) => {
                       if (err) throw err;
                       mailOptions = {
                         to: email,
-                        subject: "Please confirm your Email account",
-                        html: `Hello,<br> Please Click on the link to verify your email.<br><a href=http://localhost/auth/verify?token=${token}>Click here to verify</a>`,
+                        subject: `Welcome ${username}`,
+                        html: `Hello,<br> Please Click on the link to verify your email.<br><a href=http://127.0.0.1:5000/auth/verify?token=${token}>Click here to verify</a>`,
                       };
                       try {
                         const response = await transporter.sendMail(
@@ -82,6 +82,7 @@ route.post("/signup", async (req, res) => {
                           res.send("Hell No");
                         }
                       } catch (error) {
+                        console.log("Email error", error);
                         res.send(error);
                       }
                     });
@@ -123,8 +124,7 @@ route.get("/verify", (req, res) => {
               console.log(err);
             }
           });
-          client.hdel(token, "email");
-          res.redirect("/login");
+          res.json({ message: "Email successfully verified" });
         } catch (error) {
           console.log(error);
         }
