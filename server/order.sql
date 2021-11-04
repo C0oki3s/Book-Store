@@ -27,3 +27,15 @@
 --     email VARCHAR(150) NOT NULL,
 --     password VARCHAR(200) NOT NULL
 -- )
+
+
+
+-- CREATE TABLE books(
+--     id uuid DEFAULT uuid_generate_v4 (),
+--     author VARCHAR(180) NOT NULL,
+--     instock INT NOT NULL,
+--     price INT NOT NULL,
+--     name VARCHAR(100) NOT NULL,
+--     description VARCHAR(300),
+--     book_image VARCHAR(200)
+-- )

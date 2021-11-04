@@ -14,7 +14,7 @@ route.get("/setting", async (req, res) => {
           let username = results.rows[0].username;
           let email = results.rows[0].email;
           res.render("users_settings", { username: username, email: email });
-        } else {
+        } else {  
           req.session.destroy();
           res.redirect("/auth/login");
         }
@@ -46,7 +46,6 @@ route.post("/update/details", async (req, res) => {
   try {
     const { street, pincode, city, state, phone_number } = req.body;
     const user_id = req.session.userID;
-    console.log(req.session.userID);
     let errors = [];
     if (!street || !pincode || !city || !state || !phone_number) {
       errors.push({ message: "Need to Fill All fields" });

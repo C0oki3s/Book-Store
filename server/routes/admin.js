@@ -53,12 +53,12 @@ route.post("/upload/book", upload.single("book_image"), async (req, res) => {
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: "bookstore",
     });
-    const { name, author, price, description } = req.body;
+    const { name, author, price, description,stock } = req.body;
     const image = req.file.filename;
     const book_image = result.secure_url;
     pool.query(
-      `INSERT INTO books(author,price,name,description,book_image) VALUES($1,$2,$3,$4,$5) RETURNING  author,price,name,description,book_image`,
-      [author, price, name, description, book_image],
+      `INSERT INTO books(author,price,instock,name,description,book_image) VALUES($1,$2,$3,$4,$5,$6) RETURNING id,author,price,instock,name,description,book_image`,
+      [author, price, stock,name, description, book_image],
       (err, results) => {
         if (err) throw err;
         res.render("admin", { book: results.rows });
@@ -80,13 +80,13 @@ route.get("/getbooks", (req, res) => {
 });
 
 route.post("/updatebook", async (req, res) => {
-  const { author, price, name, description, id } = req.body;
+  const { author, price, name, description, id,stock } = req.body;
   await pool.query(
-    `UPDATE books SET author = $1, price = $2, name = $3, description = $4 WHERE id=$5 RETURNING  author,price,name,description,book_image`,
-    [author, price, name, description, id],
+    `UPDATE books SET author = $1, price = $2,instock=$3, name = $4, description = $5 WHERE id=$6 RETURNING  author,price,name,description,book_image`,
+    [author, price,stock, name, description, id],
     (err, results) => {
       if (err) throw err;
-      res.json(results.command);
+      res.redirect("/admin/getbooks")
     }
   );
 });

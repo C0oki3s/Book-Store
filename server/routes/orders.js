@@ -1,8 +1,9 @@
 const express = require("express");
 const pool = require("../db/db");
+const {instock,OrderSucess,OrderFailed} = require("../middleware/ordermiddelWare")
 const route = express.Router();
 
-route.post("/addcart", async (req, res) => {
+route.post("/addcart",instock, async (req, res) => {
   const { id } = req.body;
   const user_id = req.session.userID;
   const quantity = 1;
@@ -28,8 +29,9 @@ route.post("/addcart", async (req, res) => {
               pool.query(
                 `UPDATE orders SET quantity =$1, price = $2 WHERE user_id=$3 RETURNING id`,
                 [new_quantity, new_price, user_id],
-                (err, results) => {
+                async(err, results) => {
                   if (err) throw err;
+                  await OrderSucess({id:id,quantity:new_quantity})
                   res.redirect("/orders");
                 }
               );
@@ -44,8 +46,9 @@ route.post("/addcart", async (req, res) => {
                   result.rows[0].book_image,
                   result.rows[0].name,
                 ],
-                (err, results) => {
+                async(err, results) => {
                   if (err) throw err;
+                  await OrderSucess({id:id,quantity:new_quantity})
                   res.redirect("/orders");
                 }
               );
@@ -75,49 +78,63 @@ route.get("/", (req, res) => {
 
 route.post("/update/:orderid", async (req, res) => {
   const orderid = req.params.orderid;
+  const user_id = req.session.userID
   const { quantity } = req.body;
   let errors = [];
   let re = /^\d+$/;
   const max_limit = 10;
-  await pool.query(
-    `SELECT book_id FROM orders WHERE id=$1`,
-    [orderid],
-    (err, results) => {
-      if (err) throw err;
-      pool.query(
-        `SELECT price FROM books WHERE id=$1`,
-        [results.rows[0].book_id],
-        (err, result) => {
-          if (quantity > max_limit) {
-            errors.push({
-              message:
-                "You can only order quantity of 10 books at a time or contact admin!!",
-            });
+
+    var OrderValue = await pool.query(`SELECT id=$1 FROM orders WHERE user_id=$2`,[orderid,user_id])
+    var isOrdered = OrderValue?.rows[0]["?column?"]
+    if(isOrdered){
+      await pool.query(
+        `SELECT book_id FROM orders WHERE id=$1`,
+        [orderid],
+        async(err, results) => {
+          if (err) throw err;
+          const stockdata = await pool.query(`SELECT instock FROM books WHERE id=$1`,[results.rows[0]?.book_id])
+          if(stockdata.rows[0].instock <= 0){
+            return res.json({ message: "Out Of stock" });
           }
-          if (!re.test(quantity)) {
-            errors.push({ message: "Qunatity Must be Integer" });
-          }
-          if (errors.length > 0) {
-            res.render("orders", { errors: errors });
-          } else {
-            var update_price = quantity * result.rows[0].price;
-            pool.query(
-              `UPDATE orders SET quantity=$1,price=$2 WHERE id=$3`,
-              [quantity, update_price, orderid],
-              (err, results) => {
-                if (err) throw err;
-                res.redirect("/orders");
+          pool.query(
+            `SELECT price FROM books WHERE id=$1`,
+            [results.rows[0]?.book_id],
+            (err, result) => {
+              if (quantity > max_limit) {
+                errors.push({
+                  message:
+                    "You can only order quantity of 10 books at a time or contact admin!!",
+                });
               }
-            );
-          }
+              if (!re.test(quantity)) {
+                errors.push({ message: "Qunatity Must be Integer" });
+              }      
+              if (errors.length > 0) {
+               return res.render("orders", { errors: errors });
+              } else {
+                var update_price = quantity * result.rows[0].price;
+                pool.query(
+                  `UPDATE orders SET quantity=$1,price=$2 WHERE id=$3`,
+                  [quantity, update_price, orderid],
+                  async(err) => {
+                    if (err) throw err;
+                    await OrderSucess({id:results.rows[0]?.book_id,quantity:quantity})
+                    res.redirect("/orders");
+                  }
+                );
+              }
+            }
+          );
         }
       );
+    }else{
+      res.status(401).json({message:"Order Not Found"})
     }
-  );
 });
 
-route.post("/delete/:orderid", (req, res) => {
+route.post("/delete/:orderid", async(req, res) => {
   const orderid = req.params.orderid;
+  const quantity =  await pool.query(`SELECT * FROM orders WHERE id=$1`,[orderid])
   pool.query(`DELETE FROM orders WHERE id = $1`, [orderid], (err, results) => {
     if (err) throw err;
     res.redirect("/");
