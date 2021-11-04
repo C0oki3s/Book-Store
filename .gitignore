@@ -1,7 +1,5 @@
 node_modules/
-*.sql
 *.vscode
-*.http
 package-lock.json
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
@@ -18,7 +16,6 @@ package-lock.json
 
 # misc
 .DS_Store
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
