@@ -27,17 +27,17 @@ route.post("/addcart",instock, async (req, res) => {
               let new_quantity = results.rows[0].quantity + quantity;
               let new_price = result.rows[0].price * new_quantity;
               pool.query(
-                `UPDATE orders SET quantity =$1, price = $2 WHERE user_id=$3 RETURNING id`,
+                `UPDATE orders SET quantity =$1, price = $2 WHERE user_id=$3 RETURNING *`,
                 [new_quantity, new_price, user_id],
-                async(err, results) => {
+                async(err, result) => {
                   if (err) throw err;
-                  await OrderSucess({id:id,quantity:new_quantity})
+                  // await OrderSucess({value:result.rows})
                   res.redirect("/orders");
                 }
               );
             } else {
               pool.query(
-                `INSERT INTO orders(user_id,book_id,quantity,price,book_image,book_name) VALUES($1,$2,$3,$4,$5,$6) RETURNING id`,
+                `INSERT INTO orders(user_id,book_id,quantity,price,book_image,book_name) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
                 [
                   user_id,
                   id,
@@ -46,9 +46,9 @@ route.post("/addcart",instock, async (req, res) => {
                   result.rows[0].book_image,
                   result.rows[0].name,
                 ],
-                async(err, results) => {
+                async(err, result) => {
                   if (err) throw err;
-                  await OrderSucess({id:id,quantity:new_quantity})
+                  // await OrderSucess({value:result.rows})
                   res.redirect("/orders");
                 }
               );
@@ -114,11 +114,11 @@ route.post("/update/:orderid", async (req, res) => {
               } else {
                 var update_price = quantity * result.rows[0].price;
                 pool.query(
-                  `UPDATE orders SET quantity=$1,price=$2 WHERE id=$3`,
+                  `UPDATE orders SET quantity=$1,price=$2 WHERE id=$3 RETURNING *`,
                   [quantity, update_price, orderid],
-                  async(err) => {
+                  async(err,result) => {
                     if (err) throw err;
-                    await OrderSucess({id:results.rows[0]?.book_id,quantity:quantity})
+                    // await OrderSucess({value:result.rows})
                     res.redirect("/orders");
                   }
                 );
@@ -134,8 +134,7 @@ route.post("/update/:orderid", async (req, res) => {
 
 route.post("/delete/:orderid", async(req, res) => {
   const orderid = req.params.orderid;
-  const quantity =  await pool.query(`SELECT * FROM orders WHERE id=$1`,[orderid])
-  pool.query(`DELETE FROM orders WHERE id = $1`, [orderid], (err, results) => {
+  pool.query(`DELETE FROM orders WHERE id = $1`, [orderid],async (err, results) => {
     if (err) throw err;
     res.redirect("/");
   });

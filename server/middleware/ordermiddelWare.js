@@ -16,8 +16,18 @@ middlewareObject.instock = async (req, res, next) => {
   };
 
   middlewareObject.OrderSucess = async(quantity,req,res,next)=>{
-    console.log( quantity )
-    return
+    var total = 0
+    const book_id = quantity.value[0]?.book_id
+    const CheckNumberoforders = await pool.query(`SELECT quantity FROM orders WHERE book_id=$1`,[book_id])
+    CheckNumberoforders.rows.map(({quantity})=>{
+      total += quantity
+    })
+    await pool.query(`SELECT instock FROM books WHERE id=$1`,[book_id],async(err,results)=>{
+      let {instock} = results.rows[0]
+      var UpdatedinStock = instock - total
+      const UpdateQuantity = await pool.query(`UPDATE books SET instock=$1 WHERE id=$2`,[UpdatedinStock,book_id])
+      return
+    })
   }
   
   module.exports = middlewareObject;
