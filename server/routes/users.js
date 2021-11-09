@@ -1,3 +1,4 @@
+const { application } = require("express");
 const express = require("express");
 const pool = require("../db/db");
 const route = express.Router();
@@ -85,5 +86,14 @@ route.post("/update/details", async (req, res) => {
     console.log(error.message);
   }
 });
+
+
+route.get("/delete",(req,res)=>{
+  const id = req.userID
+  pool.query(`DELETE FROM user_auth WHERE id=$1`,[id],(err,result)=>{
+    if(err) throw err
+    res.destroy()
+  })
+})
 
 module.exports = route;
