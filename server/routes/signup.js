@@ -77,7 +77,7 @@ route.post("/signup", async (req, res) => {
                           mailOptions
                         );
                         if (response) {
-                          res.send(JSON.stringify(response));
+                          res.send({email:"Email has sent your mail Please check in your spam"});
                         } else {
                           res.send("Hell No");
                         }
