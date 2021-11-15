@@ -15,7 +15,7 @@ middlewareObject.instock = async (req, res, next) => {
     }
   };
 
-  middlewareObject.OrderSucess = async(quantity,req,res,next)=>{
+middlewareObject.OrderSucess = async(quantity,req,res,next)=>{
     var total = 0
     const book_id = quantity.value[0]?.book_id
     const CheckNumberoforders = await pool.query(`SELECT quantity FROM orders WHERE book_id=$1`,[book_id])
@@ -29,5 +29,23 @@ middlewareObject.instock = async (req, res, next) => {
       return
     })
   }
+
+middlewareObject.verify = async (req, res, next) => {
+    const { captcha } = req.body
+    if (!captcha) {
+        return res.json({ message: "Plase send Captcha" })
+    } else {
+        const CaptchaKey = "6LcpxPEcAAAAADnXBTx4baMPerjlHFxNbmwb6dOH"
+        const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${CaptchaKey}&response=${captcha}`
+        axios.get(verifyURL)
+            .then((response) => {
+                if (response.data.success) {
+                    next()
+                } else {
+                    return res.status(429).json({ message: 'Re-using captcha' })
+                }
+            })
+    }
+}
   
   module.exports = middlewareObject;
